@@ -1,13 +1,18 @@
-import express, { Request, Response, NextFunction } from 'express';
+import express from 'express';
+import type { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import path from 'path';
-import { connectDB } from './db';
+import { fileURLToPath } from 'url';
+import { connectDB } from './db.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 
 app.use(cors());
 app.use(express.json({ limit: '1mb' }));
-app.use(express.static(path.join(__dirname, 'public'))); // Serve static dashboard UI
+app.use(express.static(path.join(__dirname, 'public')));
 
 let db: any;
 
@@ -105,12 +110,11 @@ app.get('/api/telemetry', (req: Request, res: Response) => {
   });
 });
 
-// Root Route: Serve Dashboard
 app.get('/', (req: Request, res: Response) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-  console.log(`🚀 Neelakantha Cosmic Mirror Server running on http://localhost:${PORT}`);
+  console.log(`🚀 Neelakantha Cosmic Mirror Server running on port ${PORT}`);
 });
