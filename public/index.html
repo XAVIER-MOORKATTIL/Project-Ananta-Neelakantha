@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Project Ananta-Neelakantha - Chaos Core Dashboard</title>
+  <style>
+    body { background: #0a0a12; color: #00ffcc; font-family: monospace; padding: 20px; }
+    h1 { border-bottom: 2px solid #00ffcc; padding-bottom: 10px; }
+    .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 20px; }
+    .card { background: #121222; border: 1fr solid #00ffcc; border-radius: 8px; padding: 20px; box-shadow: 0 0 10px rgba(0,255,204,0.2); }
+    .status-CLOSED { color: #00ffcc; font-weight: bold; }
+    .status-OPEN { color: #ff0055; font-weight: bold; }
+    .status-HALF-OPEN { color: #ffcc00; font-weight: bold; }
+    button { background: #ff0055; color: white; border: none; padding: 12px 20px; font-weight: bold; cursor: pointer; font-family: monospace; border-radius: 4px; }
+    button:hover { background: #cc0044; }
+  </style>
+</head>
+<body>
+
+  <h1>⚡ ANANTA-NEELAKANTHA: THE COSMIC MIRROR CORE</h1>
+
+  <div class="grid">
+    <div class="card">
+      <h3>TOTAL INGESTED</h3>
+      <h2 id="ingested">0</h2>
+    </div>
+    <div class="card">
+      <h3>TOTAL QUARANTINED</h3>
+      <h2 id="quarantined">0</h2>
+    </div>
+    <div class="card">
+      <h3>CIRCUIT BREAKER STATE</h3>
+      <h2 id="circuitStatus" class="status-CLOSED">CLOSED</h2>
+    </div>
+  </div>
+
+  <div style="margin-top: 40px;" class="card">
+    <h3>THE CRUCIBLE OF CHAOS (LIVE INJECTION)</h3>
+    <button onclick="injectChaos()">🔥 INJECT SYNTHETIC NO-SQL ATTACK</button>
+    <button onclick="sendClean()" style="background: #00ffcc; color: #000; margin-left: 10px;">⚡ SEND CLEAN TRANSACTION</button>
+    <p id="log" style="margin-top: 15px; color: #aaa;"></p>
+  </div>
+
+  <script>
+    async function updateTelemetry() {
+      try {
+        const res = await fetch('/api/telemetry');
+        const data = await res.json();
+        document.getElementById('ingested').innerText = data.metrics.totalIngested;
+        document.getElementById('quarantined').innerText = data.metrics.totalQuarantined;
+        
+        const statusEl = document.getElementById('circuitStatus');
+        statusEl.innerText = data.metrics.circuitStatus;
+        statusEl.className = 'status-' + data.metrics.circuitStatus;
+      } catch (err) {
+        console.error("Telemetry fetch offline", err);
+      }
+    }
+
+    async function injectChaos() {
+      const res = await fetch('/api/ingest', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ user: "MaliciousActor", amount: { "$gt": 0 }, action: "SYNTHETIC_ATTACK" })
+      });
+      const data = await res.json();
+      document.getElementById('log').innerText = "Last Result: " + JSON.stringify(data);
+      updateTelemetry();
+    }
+
+    async function sendClean() {
+      const res = await fetch('/api/ingest', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ user: "Xavier", amount: 250, action: "TRANSFER" })
+      });
+      const data = await res.json();
+      document.getElementById('log').innerText = "Last Result: " + JSON.stringify(data);
+      updateTelemetry();
+    }
+
+    setInterval(updateTelemetry, 1000);
+    updateTelemetry();
+  </script>
+
+</body>
+</html>
